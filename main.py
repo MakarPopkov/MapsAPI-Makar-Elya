@@ -9,6 +9,11 @@ from PyQt5.QtGui import QPixmap
 from design import Ui_Form
 
 
+print('Введите координаты(через пробел)')
+coords = input()
+print('Введите масштаб')
+size = input()
+
 class MainWindow(QWidget, Ui_Form):
     def __init__(self):
         super().__init__()
@@ -16,28 +21,39 @@ class MainWindow(QWidget, Ui_Form):
         self.setWindowTitle('Yandex Maps 2')
         self.main()
 
-    def main(self):
-        toponym_to_find = " ".join(sys.argv[1:])
+    def keyPressEvent(self, event):
+        if event.key() == 16777238:  # PageUp
+            pass
+        if event.key() == 16777239:  # PageDown
+            pass
 
+    def main(self):
         geocoder_api_server = "http://geocode-maps.yandex.ru/1.x/"
 
         geocoder_params = {
             "apikey": "40d1649f-0493-4b70-98ba-98533de7710b",
-            "geocode": 'г.Гусь-Хрустальный',
+            "geocode": coords,
             "format": "json"}
 
         response = requests.get(geocoder_api_server, params=geocoder_params)
 
         if not response:
+            # обработка ошибочной ситуации
             pass
 
+        # Преобразуем ответ в json-объект
         json_response = response.json()
+        # Получаем первый топоним из ответа геокодера.
         toponym = json_response["response"]["GeoObjectCollection"][
             "featureMember"][0]["GeoObject"]
+        # Координаты центра топонима:
         toponym_coodrinates = toponym["Point"]["pos"]
+        # Долгота и широта:
         toponym_longitude, toponym_lattitude = toponym_coodrinates.split(" ")
 
-        delta = "0.005"
+        delta = size
+
+        # Собираем параметры для запроса к StaticMapsAPI:
         map_params = {
             "ll": ",".join([toponym_longitude, toponym_lattitude]),
             "spn": ",".join([delta, delta]),

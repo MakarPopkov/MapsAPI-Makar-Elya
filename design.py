@@ -16,7 +16,7 @@ class Ui_Form(object):
         Form.setObjectName("Form")
         Form.resize(940, 712)
         self.map = QtWidgets.QLabel(Form)
-        self.map.setGeometry(QtCore.QRect(60, 50, 761, 561))
+        self.map.setGeometry(QtCore.QRect(20, 20, 901, 671))
         self.map.setText("")
         self.map.setObjectName("map")
 
